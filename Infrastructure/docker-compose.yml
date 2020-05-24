@@ -1,0 +1,63 @@
+version: "3.7"
+services:
+    #Nginx service
+    nginx-lb:
+        container_name: nginx
+        image: nginx
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ./nginx/certificates:/etc/nginx/certificates:ro
+            - ./nginx/conf:/etc/nginx/conf.d:ro
+            - ../Code:/code
+        restart: unless-stopped
+        #Wait for PHP to avoid Nginx process stop
+        depends_on: 
+            - php
+        networks: 
+            web:
+    # PHP Service
+    php:
+        container_name: php-7.4-fpm
+        build: ./php/7.4-fpm/
+        working_dir: /code
+        volumes:
+            - ../Code:/code
+        depends_on: 
+            - mysql
+        networks: 
+            web:
+    #Database servcie
+    mysql:
+        container_name: mysql
+        image: mysql:8
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: demo
+        volumes:
+        - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+        - ./sqldata:/var/lib/mysql
+        networks: 
+            web:
+    # PhpMyAdmin Service
+    phpmyadmin:
+        container_name: phpmyadmin
+        image: phpmyadmin/phpmyadmin:5
+        environment:
+            PMA_HOST: mysql
+        ports:
+            - '8000:80'
+        volumes:
+            - pma:/usr/src/phpmyadmin
+        depends_on:
+            - mysql
+        networks: 
+            web:
+volumes:
+    pma:
+        driver: local
+#Networks
+networks: 
+    web:
+        external: true
