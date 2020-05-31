@@ -8,7 +8,7 @@ Az alábbi példa konfig futtatása esetén egy működőképes PHP fejlesztői 
 * Mysql 8
 * PHPMyAdmin
 
-#Fejlesztői környezet elindítása:
+### Fejlesztői környezet elindítása:
 
 Első dolgunk egy `web` elnevezésű alhálózat létrehozása melyet az alábbi paranccsal érhetünk el: `docker network create web`. 
 Futassuk a gyökérben lévő Docker konfigurációs fájlt `docker-compose up -d`
